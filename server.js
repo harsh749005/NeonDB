@@ -27,6 +27,16 @@ pool.connect()
   });
 
 
+app.get("/users",async (req,res)=>{
+    try{
+        const users = await pool.query("SELECT * FROM chat_messages");
+        res.json({success:true,clients:users.rows})
+    }catch(err){
+        res.status(500).json({ error: err.message });
+    }
+
+})
+
 
 app.get("/",(req,res)=>{
     res.send("Hey this is backend");
