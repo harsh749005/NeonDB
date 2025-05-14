@@ -1,9 +1,14 @@
 const express = require("express");
 const {Pool} = require("pg");
+const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+
+// app.options("/*", cors()); // Allow OPTIONS on all route
 // neon db connection
 const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD } = process.env;
 const pool = new Pool({
@@ -35,6 +40,14 @@ app.get("/users",async (req,res)=>{
         res.status(500).json({ error: err.message });
     }
 
+})
+
+app.post('/chat',(req,res)=>{
+  const {message,sender,userId,botReply} = req.body;
+  const reply = `You said ${message} and sender is ${sender}.This is from backend`;
+  const bot = `Bot reply ${botReply}`
+  res.json({bot});
+  // res.json({});
 })
 
 
