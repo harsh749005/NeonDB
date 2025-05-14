@@ -1,10 +1,32 @@
 const express = require("express");
-const {pool} = require("pg");
-require("dotenv").config;
+const {Pool} = require("pg");
+require("dotenv").config();
 
 const app = express();
-
+app.use(express.json());
 // neon db connection
+const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD } = process.env;
+const pool = new Pool({
+  host: PGHOST,
+  database: PGDATABASE,
+  user: PGUSER,
+  password: PGPASSWORD,
+  port: 5432, // default Postgres port
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+
+pool.connect()
+.then(client=>{
+     console.log("DB connected");
+    client.release(); // Release the client back to the pool
+})
+  .catch(err => {
+    console.error("Error connecting to DB", err);
+  });
+
+
 
 app.get("/",(req,res)=>{
     res.send("Hey this is backend");
