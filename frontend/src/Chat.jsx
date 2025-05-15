@@ -37,7 +37,7 @@ const Chat = () => {
         //     text: response.data.reply || 'No response'
         // };
         // setMessages(prev => [...prev, botReply]);
-        console.log(response.data.bot);
+        console.log(response.data.message);
       } catch (err) {
         console.error("Error sending message:", err);
         const errorReply = {

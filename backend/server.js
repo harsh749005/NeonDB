@@ -41,14 +41,27 @@ app.get("/users",async (req,res)=>{
     }
 
 })
+app.post('/chat', async (req, res) => {
+  const { message, sender, userId, botReply } = req.body;
 
-app.post('/chat',(req,res)=>{
-  const {message,sender,userId,botReply} = req.body;
-  const reply = `You said ${message} and sender is ${sender}.This is from backend`;
-  const bot = `Bot reply ${botReply}`
-  res.json({bot});
-  // res.json({});
-})
+  const userInsertQuery = "INSERT INTO userChat (userId, message) VALUES($1, $2)";
+  const botInsertQuery = "INSERT INTO botChat (userId, message) VALUES($1, $2)";
+  const userValues = [userId, message];
+  const botValues = [userId, botReply];
+
+  try {
+    await pool.query(userInsertQuery, userValues);
+    await pool.query(botInsertQuery, botValues);
+    console.log("User and Bot chat inserted");
+    
+    // ✅ Send response once, after both succeed
+    res.status(200).json({ message: "User and Bot Chat Inserted" });
+
+  } catch (error) {
+    console.error("Failed to insert", error);
+    res.status(500).json({ error: 'Failed to insert chat' });
+  }
+});
 
 
 app.get("/",(req,res)=>{
