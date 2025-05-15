@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useEffect } from "react";
 const Chat = () => {
   const [messages, setMessages] = useState([
     { sender: "bot", text: "Hello! How can I help you today?" },
@@ -27,8 +28,8 @@ const Chat = () => {
         axios.defaults.withCredentials = false;
         const values = {
           message: input,
-          sender: "user",
-          userId: "user123",
+          sender: "user1",
+          userId: "user124",
           botReply:botReply.text
         };
         const response = await axios.post("http://localhost:3000/chat", values);
@@ -52,6 +53,19 @@ const Chat = () => {
   const handleKeyPress = (e) => {
     if (e.key === "Enter") sendMessage();
   };
+
+  useEffect(()=>{
+    const fetchChatMessages = async()=>{
+
+      try{
+        const chatMessages = await axios.get("http://localhost:3000/chatMessages");
+        console.log(chatMessages.data);
+      }catch(error){
+        console.log("No data",error)
+      }
+    }
+    fetchChatMessages();
+  },[])
 
   return (
     <div className="max-w-md mx-auto mt-10 border shadow-lg rounded-lg overflow-hidden flex flex-col h-[500px]">

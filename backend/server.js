@@ -63,6 +63,18 @@ app.post('/chat', async (req, res) => {
   }
 });
 
+//sending chat messages to frontend
+app.get("/chatMessages",async (req,res)=>{
+  const chatFetchQuery = "SELECT * FROM userChat WHERE userid = 'user124'UNION SELECT * FROM botChat WHERE userid = 'user124'";
+  try {
+    const result = await pool.query(chatFetchQuery);
+    console.log("Query result:", result.rows);
+    res.status(200).json({ success: true, data: result.rows });
+  }catch(error){
+    console.log("Error fetching chat messages:", error);
+  }
+  res.status(200).json({success:"Did you get this?"})
+})
 
 app.get("/",(req,res)=>{
     res.send("Hey this is backend");
