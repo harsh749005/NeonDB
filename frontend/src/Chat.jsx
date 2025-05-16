@@ -1,7 +1,8 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useEffect } from "react";
 const Chat = () => {
+  const hasRun = useRef(false);
   const [messages, setMessages] = useState([
     { sender: "bot", text: "Hello! How can I help you today?" },
   ]);
@@ -28,8 +29,7 @@ const Chat = () => {
         axios.defaults.withCredentials = false;
         const values = {
           message: input,
-          sender: "user1",
-          userId: "user124",
+          userName: "mohit",
           botReply:botReply.text
         };
         const response = await axios.post("http://localhost:3000/chat", values);
@@ -55,16 +55,21 @@ const Chat = () => {
   };
 
   useEffect(()=>{
-    const fetchChatMessages = async()=>{
+    if (!hasRun.current) {
 
-      try{
-        const chatMessages = await axios.get("http://localhost:3000/chatMessages");
-        console.log(chatMessages.data);
-      }catch(error){
-        console.log("No data",error)
+      hasRun.current = true;
+      
+      const fetchChatMessages = async()=>{
+  
+        try{
+          const chatMessages = await axios.get("http://localhost:3000/chatMessages");
+          console.log(chatMessages.data);
+        }catch(error){
+          console.log("No data",error)
+        }
       }
+      fetchChatMessages();
     }
-    fetchChatMessages();
   },[])
 
   return (

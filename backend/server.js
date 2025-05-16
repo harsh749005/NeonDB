@@ -42,12 +42,23 @@ app.get("/users",async (req,res)=>{
 
 })
 app.post('/chat', async (req, res) => {
-  const { message, sender, userId, botReply } = req.body;
-
-  const userInsertQuery = "INSERT INTO userChat (userId, message) VALUES($1, $2)";
-  const botInsertQuery = "INSERT INTO botChat (userId, message) VALUES($1, $2)";
-  const userValues = [userId, message];
-  const botValues = [userId, botReply];
+  const { message, userName, botReply } = req.body;
+  const usedUserIDs = new Set(['dummy']);
+  const usedBotIDs = new Set(['dummy']);
+  const generateUniqueIds = (prefix,usedIds)=>{
+    let id;
+    do{
+      id = prefix + Math.floor(Math.random()*101);
+    }while(usedIds.has(id));
+    usedIds.add(id);
+    return id;
+  }
+  const userId = generateUniqueIds("user",usedUserIDs);
+  const botId = generateUniqueIds("user",usedBotIDs);
+  const userInsertQuery = "INSERT INTO userChat (username, message,id) VALUES($1, $2, $3)";
+  const botInsertQuery = "INSERT INTO botChat (username, botmessage,id) VALUES($1, $2, $3)";
+  const userValues = [userName, message,userId ];
+  const botValues = [userName, botReply,botId];
 
   try {
     await pool.query(userInsertQuery, userValues);
@@ -65,7 +76,7 @@ app.post('/chat', async (req, res) => {
 
 //sending chat messages to frontend
 app.get("/chatMessages",async (req,res)=>{
-  const chatFetchQuery = "SELECT * FROM userChat WHERE userid = 'user124'UNION SELECT * FROM botChat WHERE userid = 'user124'";
+  const chatFetchQuery = "SELECT * FROM userChat WHERE username = 'mohit'UNION SELECT * FROM botChat WHERE username = 'mohit'";
   try {
     const result = await pool.query(chatFetchQuery);
     console.log("Query result:", result.rows);
@@ -73,7 +84,7 @@ app.get("/chatMessages",async (req,res)=>{
   }catch(error){
     console.log("Error fetching chat messages:", error);
   }
-  res.status(200).json({success:"Did you get this?"})
+  
 })
 
 app.get("/",(req,res)=>{
