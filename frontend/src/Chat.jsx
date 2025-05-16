@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { useEffect } from "react";
 const Chat = () => {
   const hasRun = useRef(false);
-  const userName = "mohit"; // this name will be fetch from user form
+  const userName = "mohit"; // this name will be fetch from user form and will sent to backend
   const [messages, setMessages] = useState([]); //new chat and chat history are stored here
   const [input, setInput] = useState(""); //only new chat
   const messageEndRef = useRef(null); //to scroll up
